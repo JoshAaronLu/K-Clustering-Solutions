@@ -143,6 +143,8 @@ d3.csv("data/public_schools_short.csv", d => ({
     function initNaiveMeans() {
       resetNaiveMeans();
       draw(naiveMeansSvg, naiveData, bestCenters);  // no centers
+      d3.select("#total-points-naive-means").text(naiveData.length);
+      d3.select("#num-clusters-naive-means").text(k);
       console.log("Naive means initialized");
       }
   
