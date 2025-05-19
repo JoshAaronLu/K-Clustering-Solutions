@@ -1,0 +1,97 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    font-size: 1.15rem;            /* Increased base font size */
+    background-color: #f4f4f9;    /* Subtle background color */
+    color: #333;                  /* Darker text for readability */
+}
+#controls {
+    /* margin-bottom: 15px;          K-Means controls spacing */
+}
+svg {
+    border: 1px solid #bbb;       /* Softer border */
+    background: #ffffff;          /* White canvas */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.point { 
+    opacity: 0.7;
+}
+.centroid {
+    stroke: #000;
+    stroke-width: 2px;
+}
+button, input {
+    margin: 0 8px;
+    padding: 8px 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e7e7e7;
+    cursor: pointer;
+}
+button:hover, input:hover {
+    background-color: #dcdcdc;
+}
+.info-box {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    line-height: 1.8;
+}
+.clean-list {
+    list-style-position: inside;
+    padding-left: 20px;
+    text-align: left;
+}
+.clean-list li::marker {
+    font-weight: bold;
+}
+
+#kmeans-controls, #gonzalez-controls {
+    margin: 10px 0;
+}
+svg {
+    margin-bottom: 20px;  /* add spacing below each map */
+}
+button, input {
+    margin: 0 5px;        /* override smaller gaps */
+    padding: 5px 10px;
+    font-size: 1rem;
+}
+#kmeans-controls { margin-bottom: 10px; }
+#gonzalez-center-distances {
+    margin-top: 10px;
+}
+/* placeholders for Gonzalez circles */
+.center { }
+.radius { }
+ .info-box p {
+    text-align: justify;
+    margin: 20px;
+} 
+
+#intro{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+h1 {
+   margin: 50px;
+}
+
+h2 {
+    margin: 50px;
+}
+
+h3 {
+    margin: 40px;
+}
+
+li {
+    text-align: justify;
+}

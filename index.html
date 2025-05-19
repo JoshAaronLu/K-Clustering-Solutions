@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Combined K-Means & K-Centers Visualizations</title>
+  
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- For the LaTeX in the info-box -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<div>
+  <h1 id="intro">A Visual Exploration of K-Centered Clustering Algorithms</h1>
+  <h2 id="intro"> - Optimizing After-School Program Locations across the U.S</h2>
+  <h3>by Josh Lu, Johann Paul, and Bhuvan Devasru</h3>
+  <h2>Introduction</h2>
+  <div class="info-box">
+    <p>
+      <b>Given a set of cities, if you could only build a handful of hospitals across all of them, where would you choose to build them?</b>
+    </p>
+
+    <p>
+    This question is a common example of the K-Center clustering problem, 
+    a classic mathematical problem studied in computer science in which one 
+    aims to pick the k best centers, given a set of points to choose from. 
+  </p>
+
+<p>
+    Other real-world examples include building distribution warehouses for supply networks, 
+    clustering for machine learning purposes, or, as demonstrated in this article, building 
+    after school programs in public schools.
+  </p>
+
+This page, contains a series of interactive visualizations 
+intended to help users understand and compare five different approaches to the K-Centered problem, 
+using data of public school locations across the U.S. taken from the 
+National Center for Education Statistics'
+<a href="https://nces.ed.gov/programs/edge/geographic/schoollocations">2023-2024 Public Schools & School Districts</a>  
+data set as our locations. 
+
+  </div>
+  <h2>Optimization Criteria: K-Means v.s. K centers</h2>
+  <div class="info-box">
+    Given our problem, there are different ways we could approach the solution.
+
+    <p>
+    Do we want to pick our centers such that the average distance from a 
+    point to it’s closest center is minimized? This is the <b>K-Means</b> approach.
+    </p>    
+
+    <p>
+    Or, do we want to pick our centers such that the maximum distance 
+    of any given point is minimized (e.g. no city is more than 1 hour 
+    away from a hospital)? This is the <b>K-centered</b> approach.
+    </p>    
+
+    This decision will change the criteria on which we optimize when designing an algorithm.
+    
+  </div>
+  <h2>The Naive Solution</h2>
+  <div class="info-box">
+    <p>The most obvious approach to any problem is brute force. 
+      For K-centered clustering, this means trying every possible combination and picking the best one.
+      While brute-forcing will get you an optimal solution it is oftentimes too inefficient in practice.</p>
+  
+      <p><b>Brute force approach (K-Centers)</b>
+ <ol> 
+  <li>Generate all possible combinations of K centers from our set of points</li>
+  <li>Go through each combination, compute the max distance from each point to its nearest center</li>
+  <li>Keep track of combination with the smallest “worst-case” distance</li>
+ </ol>
+      
+        
+        This is extremely inefficient as the number of points grows, and is only feasible for tiny data sets. Below, we’ve modeled the naive K-Centers algorithm on a small subset of the U.S. public schools. For each step, we’ve drawn a line highlighting the “worst-case” max distance point-center pair. 
+        </p>
+
+  <div id="controls-naive">
+    <label for="k-naive">k = </label>
+    <input type="number" id="k-naive" value="3" min="1" max="4" />
+    <button id="reset-naive">Reset (Finish Algorithm)</button>
+    <button id="step-zero-naive">Step Zero</button>
+    <button id="next-naive">Next Iteration</button>
+    <button id="play-naive">Play</button>
+    <button id="pause-naive" disabled>Pause</button>    
+  </div>
+  
+  <br>
+  Step: <span id="step-naive"></span><br>
+  Current max distance to nearest center: <span id="max-distance-naive"></span><br>
+  Best recorded max distance to nearest center: <span id="best-distance-naive"></span><br>
+  Displaying k = <span id="num-clusters-naive"></span> clusters 
+  and n = <span id="total-points-naive"></span> total points.<br>
+  <svg id="naive-svg" width="800" height="600"></svg>
+  </div>
+  <br><br>
+  
+  <h2>Naive K-Means </h2>
+  <div class="info-box">
+    <p>
+      The Naive approach to K-Means is similar to the naive K-Centers approach, but instead
+      of optimizing for the best "worst-case" distance, we optimize for 
+      the best average (squared) distance for each point to its nearest center.
+      </p>
+
+      <p></p>
+    <br>
+
+  <div id="controls-naive-means">
+    <label for="k-naive-means">k = </label>
+    <input type="number" id="k-naive-means" value="3" min="1" max="4" />
+    <button id="reset-naive-means">Reset (Step Zero)</button>
+    <button id="finish-naive-means">Finish Algorithm</button>
+    <button id="next-naive-means">Next Iteration</button>
+    <button id="play-naive-means">Play</button>
+    <button id="pause-naive-means" disabled>Pause</button>
+  </div>
+
+
+  <br>
+  Step: <span id="step-naive-means"></span><br>
+  Current average squared distance: <span id="avg-distance-naive-means"></span><br>
+  Best recorded average distance: <span id="best-average-naive-means"></span><br>
+  Displaying k = <span id="num-clusters-naive"></span> clusters 
+  and n = <span id="total-points-naive"></span> total points.<br>
+  <svg id="naive-means-svg" width="800" height="600"></svg>
+  </div>
+  <br>
+  <h2>Prolems with the Naive Algorithms</h2>
+  <div class="info-box">
+    <p>When visualizing these algorithms, we only used a tiny subset (less than fifty)
+       of the hundred thousand public schools in the United States.
+      It is nearly impossible to run these algorithms on a data-set as large as the schools. 
+      While these algorithms can get you the optimal solution, 
+      their runtimes are incredibly inefficient. 
+      In particular both of these algorithms run in \(\mathcal{O}(2^{n})\) time. 
+      We can’t use these algorithms on large examples as their time complexities 
+      blow up way too quickly. Hence, for us to succeed in solving what we set 
+      across to do, we must come up with more efficient algorithms. 
+</p>
+  </div>
+  <h2>Approximation Algorithms</h2>
+  <div class="info-box">
+    <p>It turns out that while computing an optimal solution for these problems takes 
+      exponential time, we can construct very accurate solutions 
+      that give us a certain approximation factor in polynomial time. 
+      We will discuss approximation algorithms for both k-means and k-center, 
+      that work within a realistic time complexity.
+</p>
+  </div>
+
+   <!-- 1) Lloyd’s k-Means on an Albers USA Map -->
+    <h2>Lloyd’s Algorithm</h2>
+    <div class="info-box">
+    
+    <p>Lloyd’s algorithm fails to provide a guaranteed approximation factor, 
+      however, for the vast majority of instances it provides a near optimal 
+      solution in \(\mathcal{O}(n^{3})\) time. 
+      These are the steps: <ol><li>Choose k centers at random
+</li><li>In each cluster compute the average of all the coordinates, that is, compute the centroid of each cluster. Make the point that is closest to this centroid as the new center. 
+</li><li>Repeat step 2, until convergence. </li></ol></p>
+    <div id="controls">
+      <label for="k">k = </label>
+      <input type="number" id="k" value="5" min="1" max="15" />
+      <button id="reset">Reset (Finish Algorithm)</button>
+      <button id="reset">Step Zero</button>
+      <button id="next">Next Iteration</button>
+      <button id="play">Play</button>
+      <button id="pause" disabled>Pause</button>
+    </div>    
+  </div>
+  
+  <svg id="lloyd-svg" width="800" height="600"></svg>
+  
+  <br><br>
+
+
+
+   <!-- 3) Gonzalez’s k-Centers -->
+   <h2>Gonzalez's Algorithm</h2>
+   <div class="info-box">
+    <p>Gonzalez's algorithm is a greedy approximation algorithm to the k-centers problem. It achieves a 2x approximation, which means that if the optimal solution produces a radius of R, it returns an optimal radius of at most 2R. The algorithm follows the following steps: <ol><li>Choose the first center at random
+</li><li>Find the point that is furthest away from its closest center among all points, and make   it a new center.</li><li>Choose every consequent center using the criteria established in step 2, and repeat until you have k-centers.
+</li></ol></p>
+  
+   
+  <div id="gonzalez-controls">
+    
+    <button id="gonzalez-reset">Reset</button>
+    <button id="gonzalez-next">Next Iteration</button>
+    <div id="gonzalez-center-distances">
+      Max distance of all points to nearest center: N/A
+    </div>
+  </div>
+  <svg id="gonzalez-svg" width="800" height="600"></svg>
+  <br>
+   </div>
+  <!-- <svg id="gonzalez-iteration-graph" width="600", height="450"></svg> -->
+  <!-- merged script -->
+  <script src="script.js"></script>
+</body>
+</html>
