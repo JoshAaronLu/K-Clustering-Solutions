@@ -42,3 +42,4 @@ Some comments and styling generated using Github Co-Pilot
 - Add expanding boxes with more formal definitions/detailed mathamatical formulas for algorithms.
 - Clean style and presentation, add more visuals to opening of article.
 - Add graphs to help explain the paragraphs comparing time complexity of algorithms (naive vs lloyd's vs gonzalez's vs means++), accuracy of optimal solution vs approximations
+- Change maps / some examples from full USA map to more detailed local examples (e.g. just Prince George's County elementary schools, and the map zoomed in on P.G. county), and add more consistent theming/relevant visuals to help keep a better engaging real-world example as a throughline. 
