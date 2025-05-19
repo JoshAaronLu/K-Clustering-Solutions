@@ -86,15 +86,18 @@ data set as our locations.
     <button id="play-naive">Play</button>
     <button id="pause-naive" disabled>Pause</button>    
   </div>
-  
+
   <br>
   Step: <span id="step-naive"></span><br>
   Current max distance to nearest center: <span id="max-distance-naive"></span><br>
   Best recorded max distance to nearest center: <span id="best-distance-naive"></span><br>
   Displaying k = <span id="num-clusters-naive"></span> clusters 
   and n = <span id="total-points-naive"></span> total points.<br>
-  <svg id="naive-svg" width="800" height="600"></svg>
   </div>
+
+  
+  <svg id="naive-svg" width="800" height="600"></svg>
+  
   <br><br>
   
   <h2>Naive K-Means </h2>
@@ -125,8 +128,9 @@ data set as our locations.
   Best recorded average distance: <span id="best-average-naive-means"></span><br>
   Displaying k = <span id="num-clusters-naive-means"></span> clusters 
   and n = <span id="total-points-naive-means"></span> total points.<br>
-  <svg id="naive-means-svg" width="800" height="600"></svg>
   </div>
+  <svg id="naive-means-svg" width="800" height="600"></svg>
+  
   <br>
   <h2>Prolems with the Naive Algorithms</h2>
   <div class="info-box">
@@ -150,6 +154,7 @@ data set as our locations.
       that work within a realistic time complexity.
 </p>
   </div>
+  
 
    <!-- 1) Lloyd’s k-Means on an Albers USA Map -->
     <h2>Lloyd’s Algorithm</h2>
@@ -164,8 +169,7 @@ data set as our locations.
     <div id="controls">
       <label for="k">k = </label>
       <input type="number" id="k" value="5" min="1" max="15" />
-      <button id="reset">Reset (Finish Algorithm)</button>
-      <button id="reset">Step Zero</button>
+      <button id="reset">Reset (Initialize Algorithm)</button>
       <button id="next">Next Iteration</button>
       <button id="play">Play</button>
       <button id="pause" disabled>Pause</button>
@@ -176,6 +180,53 @@ data set as our locations.
   
   <br><br>
 
+  <div class="info-box">
+    <p>While Llyod's algorithm performs well on the vast majority of cases,
+      in the worst cases it can still take exponential time to converge. 
+
+      Therefore, we seek out one final algorithm that is guaranteed to run in polynomial time, 
+      using an adjusted approach to the randomization used in Lloyd's.
+</p>
+</div>  
+   <!-- Description for K-Means++ Initialization -->
+   <div class="info-box">
+    <h1>K-Means++ Initialization & Clustering</h1>
+      <h2>K-Means++ Seeding</h2>
+      <p>
+        K-Means++ improves the random initialization of Lloyd’s k-Means by choosing
+        initial centers in a way that spreads them out. This typically leads to
+        faster convergence and better final clustering.
+      </p>
+      <h3>Initialization Steps</h3>
+      <ol class="clean-list">
+        <li>Pick the first center uniformly at random from the data points.</li>
+        <li>For each point x, compute D(x) = squared distance to the nearest chosen center.</li>
+        <li>Choose a new center at random, with probability proportional to D(x).</li>
+        <li>Repeat step 3 until k centers are chosen.</li>
+      </ol>
+      <p>
+        After these k seeds are selected, you run the standard Lloyd’s iterations.
+        K-Means++ often produces a much lower initial objective than plain random seeding.
+      </p>
+  </div>
+
+ 
+  <!-- K-Means++ Controls -->
+  <div id="kmeanspp-controls">
+    <label for="kpp-k">k = </label>
+    <input type="number" id="kpp-k" value="5" min="1" max="15" />
+    <button id="kpp-reset">Reset</button>
+    <button id="kpp-step-init">Step Init</button>
+    <button id="kpp-complete-init">Init Complete</button>
+    <button id="kpp-next">Next Iteration</button>
+    <button id="kpp-play">Play</button>
+    <button id="kpp-pause" disabled>Pause</button>
+  </div>
+  
+  <!-- Visualization canvas -->
+  <svg id="kmeanspp-svg" width="800" height="600"></svg>
+
+  
 
 
    <!-- 3) Gonzalez’s k-Centers -->
@@ -198,6 +249,8 @@ data set as our locations.
   <br>
    </div>
   <!-- <svg id="gonzalez-iteration-graph" width="600", height="450"></svg> -->
+
+
   <!-- merged script -->
   <script src="script.js"></script>
 </body>

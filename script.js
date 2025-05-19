@@ -705,3 +705,148 @@ svgTime.append("path")
       drawGonzalez(); 
       updateMaxDistance(true);
     });  
+
+    // ----- (3) K-Means++ -----
+    // Load and project data
+    d3.csv("data/public_schools_short.csv", d => ({ lon: +d.LON, lat: +d.LAT }))
+      .then(raw => {
+        const width = 800, height = 600;
+        const projection = d3.geoAlbersUsa()
+                            .translate([width/2, height/2])
+                            .scale(1000);
+
+        const data = raw
+          .map(d => {
+            const xy = projection([d.lon, d.lat]);
+            return xy ? { x: xy[0], y: xy[1] } : null;
+          })
+          .filter(d => d);
+
+        // D3 selections
+        const svg = d3.select('#kmeanspp-svg'),
+              kInput = d3.select('#kpp-k'),
+              resetBtn = d3.select('#kpp-reset'),
+              stepInitBtn = d3.select('#kpp-step-init'),
+              completeInitBtn = d3.select('#kpp-complete-init'),
+              nextBtn = d3.select('#kpp-next'),
+              playBtn = d3.select('#kpp-play'),
+              pauseBtn = d3.select('#kpp-pause');
+
+        let k = +kInput.property('value');
+        let centroids = [];
+        let initSeq = [];
+        let initIdx = 0;
+        let intervalId = null;
+        const colors = d3.schemeCategory10;
+
+        // Compute the full K-Means++ initialization sequence
+        function computeInitSequence() {
+          initSeq = [];
+          const pool = data.slice();
+          // 1) first centroid random
+          const first = pool[Math.floor(Math.random() * pool.length)];
+          initSeq.push(first);
+          let centers = [first];
+          // subsequent centroids
+          for (let i = 1; i < k; i++) {
+            // squared distances
+            const d2 = pool.map(p => d3.min(centers, c => Math.hypot(p.x-c.x, p.y-c.y)**2));
+            const sum = d3.sum(d2);
+            let r = Math.random() * sum;
+            let idx = 0;
+            while (r > d2[idx]) { r -= d2[idx]; idx++; }
+            const next = pool[idx];
+            initSeq.push(next);
+            centers.push(next);
+          }
+        }
+
+        // Draw points and centroids
+        function draw() {
+          // Points colored by cluster if centroids exist, else gray
+          const pts = svg.selectAll('circle.point').data(data);
+          pts.join('circle')
+            .attr('class','point')
+            .attr('r',3)
+            .attr('cx',d=>d.x)
+            .attr('cy',d=>d.y)
+            .attr('fill', d => {
+              if (centroids.length) {
+                // assign to nearest centroid
+                const i = d3.minIndex(centroids, c => (d.x - c.x)**2 + (d.y - c.y)**2);
+                return colors[i % colors.length];
+              }
+              return '#bbb';
+            });
+
+          // Centroids
+          const ctrs = svg.selectAll('circle.centroid').data(centroids);
+          ctrs.join('circle')
+              .attr('class','centroid')
+              .attr('r',8)
+              .attr('cx',d=>d.x)
+              .attr('cy',d=>d.y)
+              .attr('fill',(_,i)=>colors[i % colors.length]);
+        }
+
+        // Lloyd's k-means step
+        function lloydStep() {
+          // assign clusters
+          data.forEach(p => {
+            let best = 0, bestDist = Infinity;
+            centroids.forEach((c,i) => {
+              const dist = (p.x-c.x)**2 + (p.y-c.y)**2;
+              if (dist < bestDist) { bestDist = dist; best = i; }
+            });
+            p.cluster = best;
+          });
+          // recompute centroids
+          centroids = centroids.map((c,i) => {
+            const members = data.filter(p=>p.cluster===i);
+            return { x: d3.mean(members,p=>p.x), y: d3.mean(members,p=>p.y) };
+          });
+          draw();
+        }
+
+        // Controls
+        function reset() {
+          k = +kInput.property('value');
+          centroids = [];
+          initIdx = 0;
+          stopAuto();
+          computeInitSequence();
+          draw();
+        }
+
+        stepInitBtn.on('click', () => {
+          if (initIdx < initSeq.length) {
+            centroids.push(initSeq[initIdx++]);
+            draw();
+          }
+        });
+        completeInitBtn.on('click', () => {
+          for (; initIdx < initSeq.length; initIdx++) {
+            centroids.push(initSeq[initIdx]);
+          }
+          draw();
+        });
+        nextBtn.on('click', () => { stopAuto(); lloydStep(); });
+        playBtn.on('click', () => {
+          if (intervalId) return;
+          intervalId = setInterval(lloydStep, 1000);
+          playBtn.attr('disabled', true);
+          pauseBtn.attr('disabled', null);
+        });
+        pauseBtn.on('click', stopAuto);
+        resetBtn.on('click', reset);
+
+        function stopAuto() {
+          if (intervalId) clearInterval(intervalId);
+          intervalId = null;
+          playBtn.attr('disabled', null);
+          pauseBtn.attr('disabled', true);
+        }
+
+        // Initial draw
+        reset();
+    });
