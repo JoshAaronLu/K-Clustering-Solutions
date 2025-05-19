@@ -40,6 +40,8 @@ Some comments and styling generated using Github Co-Pilot
 
 ## To-Do
 - Add expanding boxes with more formal definitions/detailed mathamatical formulas for algorithms.
+- Tooltip hovers to add more information without cluttering / inhibiting initial readibility
 - Clean style and presentation, add more visuals to opening of article.
 - Add graphs to help explain the paragraphs comparing time complexity of algorithms (naive vs lloyd's vs gonzalez's vs means++), accuracy of optimal solution vs approximations
-- Change maps / some examples from full USA map to more detailed local examples (e.g. just Prince George's County elementary schools, and the map zoomed in on P.G. county), and add more consistent theming/relevant visuals to help keep a better engaging real-world example as a throughline. 
+- Revamp visual and narrative theme to all fit around P.G. county elementary schools and after-school programs, adding more visuals (like little cartoons or pictures of books/school busses) to the sides, to have a more consistent narrative through line to keep readers engaged. 
+- Change map from full USA map to more detailed local example (e.g. just P.G. county elementary schools)
